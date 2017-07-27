@@ -10,6 +10,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Toustobot\LunchMenu\MenuCrawler\ZelenaKockaMenuCrawler;
 
 
 class GetMenuCommand extends Command
@@ -31,6 +32,7 @@ class GetMenuCommand extends Command
 			'Plzeňský dvůr' => new PlzenskyDvurMenuCrawler(),
 			'Šelepka' => new SelepkaMenuCrawler(),
 			'Sono' => new SonoMenuCrawler(),
+			'Zelená Kočka' => new ZelenaKockaMenuCrawler(),
 		];
 
 

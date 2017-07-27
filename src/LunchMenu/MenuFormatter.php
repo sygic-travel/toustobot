@@ -28,7 +28,8 @@ class MenuFormatter
 		foreach ($menus as $name => $menu) {
 			$text .= "*$name* (<{$menu['url']}|link>)\n";
 			foreach ($menu['options'] as $i => $item) {
-				$text .= ($i + 1) . '. ' . $item['text'] . "\n";
+				$listNumber = count($menu['options']) <= 1 ? '' : ($i + 1) . '. ';
+				$text .= $listNumber . $item['text'] . "\n";
 			}
 			$text .= "\n";
 		}
