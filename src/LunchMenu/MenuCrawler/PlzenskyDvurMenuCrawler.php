@@ -45,7 +45,7 @@ class PlzenskyDvurMenuCrawler implements IMenuCrawler
 			$options[] = [
 				'id' => $item->text(),
 				'text' => $matches[1],
-				'price' => null,
+				'price' => $i === 0 ? 139 : ($i === 1 ? 89 : 99),
 				'alergens' => null,
 				'quantity' => $matches[0],
 			];

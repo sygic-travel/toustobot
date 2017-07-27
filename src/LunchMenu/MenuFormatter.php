@@ -2,6 +2,8 @@
 
 namespace Toustobot\LunchMenu;
 
+use Nette\Utils\Strings;
+
 
 class MenuFormatter
 {
@@ -29,7 +31,8 @@ class MenuFormatter
 			$text .= "*$name* (<{$menu['url']}|link>)\n";
 			foreach ($menu['options'] as $i => $item) {
 				$listNumber = count($menu['options']) <= 1 ? '' : ($i + 1) . '. ';
-				$text .= $listNumber . $item['text'] . "\n";
+				$price = (Strings::contains($item['text'], "\n") ? "\n" : ' ')  . "[{$item['price']}\u{2009}Kč]";
+				$text .= $listNumber . $item['text'] . "$price\n";
 			}
 			$text .= "\n";
 		}

@@ -55,7 +55,7 @@ class ZelenaKockaMenuCrawler implements IMenuCrawler
 		$option = [
 			'id' => 1,
 			'text' => implode("\n", $menuLines),
-			'price' => null,
+			'price' => 109,
 			'alergens' => null,
 			'quantity' => null,
 		];
