@@ -35,7 +35,7 @@ class HelanMenuCrawler implements IMenuCrawler
 				'id' => $i,
 				'text' => trim($matches[0]),
 				'price' => 79,
-				'alergens' => $matches[1],
+				'alergens' => $matches[1] ?? null,
 				'quantity' => null,
 			];
 		});

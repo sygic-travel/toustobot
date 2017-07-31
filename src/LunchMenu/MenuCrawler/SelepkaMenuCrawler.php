@@ -31,7 +31,7 @@ class SelepkaMenuCrawler implements IMenuCrawler
 				'id' => $i,
 				'text' => $matches[0],
 				'price' => (int) $price,
-				'alergens' => $matches[1],
+				'alergens' => $matches[1] ?? null,
 				'quantity' => null,
 			];
 		});

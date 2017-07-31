@@ -52,7 +52,7 @@ class SonoMenuCrawler implements IMenuCrawler
 				'id' => $i - 1,
 				'text' => $matches[0],
 				'price' => (int) $item->filter('td')->eq(1)->text(),
-				'alergens' => $matches[1],
+				'alergens' => $matches[1] ?? null,
 				'quantity' => null,
 			];
 		});
