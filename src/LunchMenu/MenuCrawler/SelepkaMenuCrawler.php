@@ -15,10 +15,15 @@ class SelepkaMenuCrawler implements IMenuCrawler
 	public function getMenu(\DateTimeInterface $date): array
 	{
 		$day = (int) $date->format('j');
+		$datePattern = sprintf('/^\s*%s\s*$/u', $day);
+
 		$html = file_get_contents(self::MENU_URL);
 
 		$crawler = new Crawler($html);
-		$crawler = $crawler->filter(".den > .datum > .cislo:contains(\"$day\")");
+		$crawler = $crawler->filter(".den > .datum > .cislo")
+			->reduce(function (Crawler $node, int $i) use ($datePattern): bool {
+				return (bool) Strings::match($node->text(), $datePattern);
+			});
 		$list = $crawler->parents()->eq(1)->filter('.seznam > ol > li');
 
 		$options = [];
