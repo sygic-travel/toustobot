@@ -28,7 +28,7 @@ class SonoMenuCrawler implements IMenuCrawler
 		$month = (int) $date->format('n');
 		$year = (int) $date->format('Y');
 		$weekday = self::$weekdays[$date->format('w')];
-		$datePattern = sprintf('/\s*%s\s*%s\s*\.\s*%s\s*\.\s*%s\s*$/u', $weekday, $day, $month, $year);
+		$datePattern = sprintf('/\s*0?%s\s*0?%s\s*\.\s*%s\s*\.\s*%s\s*$/u', $weekday, $day, $month, $year);
 
 		$html = file_get_contents(self::MENU_URL);
 
