@@ -22,7 +22,7 @@ class HelanMenuCrawler implements IMenuCrawler
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler
-			->filter('.et_pb_all_tabs > .et_pb_tab > p > strong')
+			->filter('.et_pb_all_tabs > .et_pb_tab p > strong')
 			->reduce(function (Crawler $node, int $i) use ($datePattern): bool {
 				return (bool) Strings::match($node->text(), $datePattern);
 			});
