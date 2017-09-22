@@ -25,16 +25,20 @@ class ZelenaKockaMenuCrawler implements IMenuCrawler
 
 		$nodes = [];
 		$crawler->filterXPath('//strong/following-sibling::node()')->each(function (Crawler $node, int $i) use (&$nodes) {
+			if ($node->nodeName() === '#comment') {
+				return;
+			}
+
+			if ($node->nodeName() === '#text' && trim($node->text()) === '') {
+				return;
+			}
+
 			$nodes[] = $node;
 		});
 
 		$menuLines = [];
 		foreach ($nodes as $i => $node) {
 			assert($node instanceof Crawler);
-
-			if ($node->nodeName() === '#comment') {
-				continue;
-			}
 
 			// stop on double <br>
 			if ($node->nodeName() === 'br' && isset($nodes[$i-1]) && $nodes[$i-1]->nodeName() === 'br') {
