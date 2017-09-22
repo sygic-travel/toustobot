@@ -5,6 +5,7 @@ namespace Toustobot\LunchMenu\MenuCrawler;
 use Toustobot\LunchMenu\IMenuCrawler;
 use Nette\Utils\Strings;
 use Symfony\Component\DomCrawler\Crawler;
+use Toustobot\Utils\Matcher;
 
 
 class HelanMenuCrawler implements IMenuCrawler
@@ -14,17 +15,13 @@ class HelanMenuCrawler implements IMenuCrawler
 
 	public function getMenu(\DateTimeInterface $date): array
 	{
-		$day = (int) $date->format('j');
-		$month = (int) $date->format('n');
-		$datePattern = sprintf('/^\s*%s\s*\.\s*%s\s*\.\s*$/u', $day, $month);
-
 		$html = file_get_contents(self::MENU_URL);
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler
 			->filter('.et_pb_all_tabs > .et_pb_tab p > strong')
-			->reduce(function (Crawler $node, int $i) use ($datePattern): bool {
-				return (bool) Strings::match($node->text(), $datePattern);
+			->reduce(function (Crawler $node, int $i) use ($date): bool {
+				return Matcher::matchesDate($date, $node->text());
 			});
 		$list = $crawler->parents()->eq(0)->nextAll()->filter('ol')->first()->filter('li');
 

@@ -5,6 +5,7 @@ namespace Toustobot\LunchMenu\MenuCrawler;
 use Toustobot\LunchMenu\IMenuCrawler;
 use Nette\Utils\Strings;
 use Symfony\Component\DomCrawler\Crawler;
+use Toustobot\Utils\Matcher;
 
 
 class SonoMenuCrawler implements IMenuCrawler
@@ -24,19 +25,13 @@ class SonoMenuCrawler implements IMenuCrawler
 
 	public function getMenu(\DateTimeInterface $date): array
 	{
-		$day = (int) $date->format('j');
-		$month = (int) $date->format('n');
-		$year = (int) $date->format('Y');
-		$weekday = self::$weekdays[$date->format('w')];
-		$datePattern = sprintf('/\s*0?%s\s*0?%s\s*\.\s*%s\s*\.\s*%s\s*$/u', $weekday, $day, $month, $year);
-
 		$html = file_get_contents(self::MENU_URL);
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler
 			->filter('article > p > strong')
-			->reduce(function (Crawler $node, int $i) use ($datePattern): bool {
-				return (bool) Strings::match($node->text(), $datePattern);
+			->reduce(function (Crawler $node, int $i) use ($date): bool {
+				return Matcher::matchesDate($date, $node->text());
 			});
 		$list = $crawler->parents()->first()->nextAll()->filter('table')->first()->filter('tbody > tr');
 
