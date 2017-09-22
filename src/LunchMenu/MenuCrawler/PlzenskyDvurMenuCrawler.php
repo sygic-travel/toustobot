@@ -37,7 +37,7 @@ class PlzenskyDvurMenuCrawler implements IMenuCrawler
 
 		$options = [];
 		$list->each(function (Crawler $item, int $i) use (&$options) {
-			$matches = Strings::split($item->nextAll()->first()->text(), '/^\s*([0-9]+(?:g|ks))\s*/u', PREG_SPLIT_NO_EMPTY);
+			$matches = Strings::split($item->nextAll()->first()->text(), '/^\s*([0-9]+\s*(?:g|ks))\s*/u', PREG_SPLIT_NO_EMPTY);
 			$options[] = [
 				'id' => $item->text(),
 				'text' => $matches[1],
