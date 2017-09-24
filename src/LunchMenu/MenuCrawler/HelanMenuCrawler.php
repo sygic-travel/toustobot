@@ -5,17 +5,31 @@ namespace Toustobot\LunchMenu\MenuCrawler;
 use Toustobot\LunchMenu\IMenuCrawler;
 use Nette\Utils\Strings;
 use Symfony\Component\DomCrawler\Crawler;
+use Toustobot\LunchMenu\MenuOption;
 use Toustobot\Utils\Matcher;
 
 
 class HelanMenuCrawler implements IMenuCrawler
 {
-	private const MENU_URL = 'http://helan.cz/centrum-veveri';
+	private const NAME = 'Helan';
+	private const URL = 'http://helan.cz/centrum-veveri';
+
+
+	public function getName(): string
+	{
+		return self::NAME;
+	}
+
+
+	public function getUrl(): string
+	{
+		return self::URL;
+	}
 
 
 	public function getMenu(\DateTimeInterface $date): array
 	{
-		$html = file_get_contents(self::MENU_URL);
+		$html = file_get_contents(self::URL);
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler
@@ -28,19 +42,18 @@ class HelanMenuCrawler implements IMenuCrawler
 		$options = [];
 		$list->each(function (Crawler $item, int $i) use (&$options) {
 			$matches = Strings::split($item->text(), '/\s+[(]\s*([0-9,]+)\s*[)]\s*$/u');
-			$options[] = [
-				'id' => $i,
-				'text' => trim($matches[0]),
-				'price' => 79,
-				'alergens' => $matches[1] ?? null,
-				'quantity' => null,
-			];
+
+			$option = new MenuOption($i, trim($matches[0]));
+			$option->setPrice(79);
+			$option->setAllergens($matches[1] ?? null);
+
+			$options[] = $option;
 		});
 
 		//$soup = Strings::replace($crawler->parents()->first()->html(), '#.*</strong>\s*#u', '');
 
 		return [
-			'url' => self::MENU_URL,
+			'url' => self::URL,
 			'options' => $options,
 			'soups' => [
 

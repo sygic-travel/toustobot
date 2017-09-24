@@ -5,27 +5,31 @@ namespace Toustobot\LunchMenu\MenuCrawler;
 use Toustobot\LunchMenu\IMenuCrawler;
 use Nette\Utils\Strings;
 use Symfony\Component\DomCrawler\Crawler;
+use Toustobot\LunchMenu\MenuOption;
 use Toustobot\Utils\Matcher;
 
 
 class SonoMenuCrawler implements IMenuCrawler
 {
-	private const MENU_URL = 'https://www.sonocentrum.cz/the-restaurant/denni-menu/';
+	private const NAME = 'Sono';
+	private const URL = 'https://www.sonocentrum.cz/the-restaurant/denni-menu/';
 
-	private static $weekdays = [
-		'Neděle',
-		'Pondělí',
-		'Úterý',
-		'Středa',
-		'Čtvrtek',
-		'Pátek',
-		'Sobota',
-	];
+
+	public function getName(): string
+	{
+		return self::NAME;
+	}
+
+
+	public function getUrl(): string
+	{
+		return self::URL;
+	}
 
 
 	public function getMenu(\DateTimeInterface $date): array
 	{
-		$html = file_get_contents(self::MENU_URL);
+		$html = file_get_contents(self::URL);
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler
@@ -43,17 +47,16 @@ class SonoMenuCrawler implements IMenuCrawler
 			}
 
 			$matches = Strings::split($item->filter('td')->first()->text(), '/\s+([0-9,]+)\s*$/u');
-			$options[] = [
-				'id' => $i - 1,
-				'text' => $matches[0],
-				'price' => (int) $item->filter('td')->eq(1)->text(),
-				'alergens' => $matches[1] ?? null,
-				'quantity' => null,
-			];
+
+			$option = new MenuOption($i - 1, $matches[0]);
+			$option->setPrice((int) $item->filter('td')->eq(1)->text());
+			$option->setAllergens($matches[1] ?? null);
+
+			$options[] = $option;
 		});
 
 		return [
-			'url' => self::MENU_URL,
+			'url' => self::URL,
 			'options' => $options,
 			'soups' => [
 

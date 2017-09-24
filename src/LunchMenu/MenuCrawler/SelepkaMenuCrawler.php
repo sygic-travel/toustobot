@@ -5,11 +5,25 @@ namespace Toustobot\LunchMenu\MenuCrawler;
 use Toustobot\LunchMenu\IMenuCrawler;
 use Nette\Utils\Strings;
 use Symfony\Component\DomCrawler\Crawler;
+use Toustobot\LunchMenu\MenuOption;
 
 
 class SelepkaMenuCrawler implements IMenuCrawler
 {
-	private const MENU_URL = 'http://www.selepova.cz/denni-menu/';
+	private const NAME = 'Šelepka';
+	private const URL = 'http://www.selepova.cz/denni-menu/';
+
+
+	public function getName(): string
+	{
+		return self::NAME;
+	}
+
+
+	public function getUrl(): string
+	{
+		return self::URL;
+	}
 
 
 	public function getMenu(\DateTimeInterface $date): array
@@ -17,7 +31,7 @@ class SelepkaMenuCrawler implements IMenuCrawler
 		$day = (int) $date->format('j');
 		$datePattern = sprintf('/^\s*%s\s*$/u', $day);
 
-		$html = file_get_contents(self::MENU_URL);
+		$html = file_get_contents(self::URL);
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler->filter(".den > .datum > .cislo")
@@ -32,19 +46,18 @@ class SelepkaMenuCrawler implements IMenuCrawler
 			$price = $item->filter('.cena')->text();
 
 			$matches = Strings::split($cs, '/\s+([0-9,]+)\s*$/u');
-			$options[] = [
-				'id' => $i,
-				'text' => $matches[0],
-				'price' => (int) $price,
-				'alergens' => $matches[1] ?? null,
-				'quantity' => null,
-			];
+
+			$option = new MenuOption($i, $matches[0]);
+			$option->setPrice((int) $price);
+			$option->setAllergens($matches[1] ?? null);
+
+			$options[] = $option;
 		});
 
 		//$soup = trim($crawler->parents()->eq(1)->filter('.seznam > .polevka')->filterXPath('//text()[last()]')->text());
 
 		return [
-			'url' => self::MENU_URL,
+			'url' => self::URL,
 			'options' => $options,
 			'soups' => [
 

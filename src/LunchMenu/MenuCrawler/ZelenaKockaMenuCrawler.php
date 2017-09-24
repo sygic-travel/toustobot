@@ -4,17 +4,31 @@ namespace Toustobot\LunchMenu\MenuCrawler;
 
 use Toustobot\LunchMenu\IMenuCrawler;
 use Symfony\Component\DomCrawler\Crawler;
+use Toustobot\LunchMenu\MenuOption;
 use Toustobot\Utils\Matcher;
 
 
 class ZelenaKockaMenuCrawler implements IMenuCrawler
 {
-	private const MENU_URL = 'http://www.zelenakocka.cz/index.php';
+	private const NAME = 'Zelená Kočka';
+	private const URL = 'http://www.zelenakocka.cz/index.php';
+
+
+	public function getName(): string
+	{
+		return self::NAME;
+	}
+
+
+	public function getUrl(): string
+	{
+		return self::URL;
+	}
 
 
 	public function getMenu(\DateTimeInterface $date): array
 	{
-		$html = file_get_contents(self::MENU_URL);
+		$html = file_get_contents(self::URL);
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler
@@ -51,16 +65,11 @@ class ZelenaKockaMenuCrawler implements IMenuCrawler
 			}
 		}
 
-		$option = [
-			'id' => 1,
-			'text' => implode("\n", $menuLines),
-			'price' => 109,
-			'alergens' => null,
-			'quantity' => null,
-		];
+		$option = new MenuOption(1, implode("\n", $menuLines));
+		$option->setPrice(109);
 
 		return [
-			'url' => self::MENU_URL,
+			'url' => self::URL,
 			'options' => [$option],
 			'soups' => [
 

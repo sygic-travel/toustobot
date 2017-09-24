@@ -28,23 +28,40 @@ class GetMenuCommand extends Command
 		$now = new \DateTime();
 
 		$menuCrawlers = [
-			'Helan' => new HelanMenuCrawler(),
-			'Plzeňský dvůr' => new PlzenskyDvurMenuCrawler(),
-			'Šelepka' => new SelepkaMenuCrawler(),
-			'Sono' => new SonoMenuCrawler(),
-			'Zelená Kočka' => new ZelenaKockaMenuCrawler(),
+			new HelanMenuCrawler(),
+			new PlzenskyDvurMenuCrawler(),
+			new SelepkaMenuCrawler(),
+			new SonoMenuCrawler(),
+			new ZelenaKockaMenuCrawler(),
 		];
 
 
-		// crawl menus
-		$menus = [];
-		foreach ($menuCrawlers as $name => $menuCrawler) {
+		// get & format menus
+		$formatter = new MenuFormatter();
+		$formattedMenus = $formatter->formatHeader($now) . "\n\n";
+
+		foreach ($menuCrawlers as $menuCrawler) {
 			assert($menuCrawler instanceof IMenuCrawler);
-			$menus[$name] = $menuCrawler->getMenu($now);
+
+			$name = $menuCrawler->getName();
+			$url = $menuCrawler->getUrl();
+
+			try {
+				// try to load the menu twice (sometimes we get random web/network errors)
+				try {
+					$menu = $menuCrawler->getMenu($now);
+				} catch (\Exception $e) {
+					sleep(1);
+					$menu = $menuCrawler->getMenu($now);
+				}
+				$formattedMenus .= $formatter->formatMenuHeader($name, $url);
+				$formattedMenus .= $formatter->formatMenuBody($menu) . "\n";
+			} catch (\Exception $e) {
+				$formattedMenus .= $formatter->formatMenuHeader($name, $url);
+				$formattedMenus .= "_Nepodařilo se načíst menu._\n\n";
+			}
 		}
 
-		// format & output
-		$formattedMenus = (new MenuFormatter())->format($now, $menus);
 		echo $formattedMenus;
 
 		// notify Slack
