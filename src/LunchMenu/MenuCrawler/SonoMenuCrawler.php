@@ -12,7 +12,7 @@ use Toustobot\Utils\Matcher;
 class SonoMenuCrawler implements IMenuCrawler
 {
 	private const NAME = 'Sono';
-	private const URL = 'https://www.sonocentrum.cz/the-restaurant/denni-menu/';
+	private const URL = 'http://www.hotel-brno-sono.cz/restaurace/';
 
 
 	public function getName(): string
@@ -33,24 +33,23 @@ class SonoMenuCrawler implements IMenuCrawler
 
 		$crawler = new Crawler($html);
 		$crawler = $crawler
-			->filter('article > p > strong')
+			->filter('#tydenni-menu .fmenu > .item > .item-head')
 			->reduce(function (Crawler $node, int $i) use ($date): bool {
 				return Matcher::matchesDate($date, $node->text());
 			});
-		$list = $crawler->parents()->first()->nextAll()->filter('table')->first()->filter('tbody > tr');
+
+		$item = $crawler->parents()->first();
+		$list = $item->filter('.foodlist > .itemd');
 
 		$options = [];
 		$list->each(function (Crawler $item, int $i) use (&$options) {
-			if ($i === 0) {
-				//$soup = $item->filter('td')->first()->text();die;
-				return;
-			}
+			$matches = Strings::match($item->filter('p')->first()->text(), '/^\s*.\)\s*([0-9]+\s*(?:g|ks|l|ml))\s+(.*?)(?:\s+\(([0-9,\s]+)\)?)?$/u');
+			$priceMatches = Strings::match($item->filter('.itemd-price')->first()->text(), '/[0-9]+/');
 
-			$matches = Strings::split($item->filter('td')->first()->text(), '/\s+([0-9,]+)\s*$/u');
 
-			$option = new MenuOption($i - 1, $matches[0]);
-			$option->setPrice((int) $item->filter('td')->eq(1)->text());
-			$option->setAllergens($matches[1] ?? null);
+			$option = new MenuOption($i - 1, $matches[2]);
+			$option->setPrice(((int) $priceMatches[0]) ?? null);
+			$option->setAllergens($matches[3] ?? null);
 
 			$options[] = $option;
 		});
