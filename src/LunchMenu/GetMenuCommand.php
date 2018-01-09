@@ -50,13 +50,13 @@ class GetMenuCommand extends Command
 				// try to load the menu twice (sometimes we get random web/network errors)
 				try {
 					$menu = $menuCrawler->getMenu($now);
-				} catch (\Exception $e) {
+				} catch (\Throwable $e) {
 					sleep(1);
 					$menu = $menuCrawler->getMenu($now);
 				}
 				$formattedMenus .= $formatter->formatMenuHeader($name, $url);
 				$formattedMenus .= $formatter->formatMenuBody($menu) . "\n";
-			} catch (\Exception $e) {
+			} catch (\Throwable $e) {
 				$formattedMenus .= $formatter->formatMenuHeader($name, $url);
 				$formattedMenus .= "_Nepodařilo se načíst menu._\n\n";
 			}
