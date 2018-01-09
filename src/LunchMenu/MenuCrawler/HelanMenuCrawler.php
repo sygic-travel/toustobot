@@ -44,7 +44,7 @@ class HelanMenuCrawler implements IMenuCrawler
 			$matches = Strings::split($item->text(), '/\s+[(]\s*([0-9,]+)\s*[)]\s*$/u');
 
 			$option = new MenuOption($i, trim($matches[0]));
-			$option->setPrice(79);
+			$option->setPrice(85);
 			$option->setAllergens($matches[1] ?? null);
 
 			$options[] = $option;
