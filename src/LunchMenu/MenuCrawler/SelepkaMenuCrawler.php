@@ -47,7 +47,7 @@ class SelepkaMenuCrawler implements IMenuCrawler
 
 			$matches = Strings::split($cs, '/\s+([0-9,]+)\s*$/u');
 
-			$option = new MenuOption($i, $matches[0]);
+			$option = new MenuOption($i + 1, $matches[0]);
 			$option->setPrice((int) $price);
 			$option->setAllergens($matches[1] ?? null);
 

@@ -43,7 +43,8 @@ class PlzenskyDvurMenuCrawler implements IMenuCrawler
 		$list->each(function (Crawler $item, int $i) use (&$options) {
 			$matches = Strings::split($item->nextAll()->first()->text(), '/^\s*([0-9]+\s*(?:g|ks))\s*/u', PREG_SPLIT_NO_EMPTY);
 
-			$option = new MenuOption($item->text(), $matches[1]);
+			$idMatches = Strings::match($item->text(), '~^Menu (.):$~');
+			$option = new MenuOption($idMatches[1] ?? ($i + 1), $matches[1]);
 			$option->setPrice($i === 0 ? 139 : ($i === 1 ? 89 : 99));
 			$option->setQuantity($matches[0]);
 

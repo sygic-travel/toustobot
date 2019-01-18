@@ -37,9 +37,9 @@ class MenuFormatter
 	public function formatMenuBody(array $menu): string
 	{
 		$text = '';
-		foreach ($menu['options'] as $i => $option) {
+		foreach ($menu['options'] as $option) {
 			assert($option instanceof MenuOption);
-			$listNumber = count($menu['options']) <= 1 ? '' : ($i + 1) . '. ';
+			$listNumber = count($menu['options']) <= 1 ? '' : $option->getId() . ') ';
 			$price = (Strings::contains($option->getText(), "\n") ? "\n" : ' ')  . "[{$option->getPrice()}\u{2009}Kč]";
 			$text .= $listNumber . $option->getText() . "$price\n";
 		}
