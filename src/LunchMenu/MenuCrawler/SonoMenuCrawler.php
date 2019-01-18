@@ -46,7 +46,7 @@ class SonoMenuCrawler implements IMenuCrawler
 			$priceNode = $item->filter('.price')->first();
 			if ($priceNode->count() > 0) {
 				$dish = Strings::replace(trim($item->text()), '~\s+~', ' ');
-				$matches = Strings::match($dish, '~^(?:([A-G])\))?+\s*(.+)$~u');
+				$matches = Strings::match($dish, '~^(?:([A-G])\))?+\s*(.+)\s(?:\d+\sCZK)$~u');
 				$priceMatches = Strings::match($priceNode->text(), '/[0-9]+/');
 
 				$option = new MenuOption($matches[1] ?? ($i + 1), $matches[2]);
