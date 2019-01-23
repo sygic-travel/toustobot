@@ -49,7 +49,7 @@ class SonoMenuCrawler implements IMenuCrawler
 				$matches = Strings::match($dish, '~^(?:([A-G])\))?+\s*(.+)\s(?:\d+\sCZK)$~u');
 				$priceMatches = Strings::match($priceNode->text(), '/[0-9]+/');
 
-				$option = new MenuOption($matches[1] ?? ($i + 1), $matches[2]);
+				$option = new MenuOption($matches[1] ?: ($i + 1), $matches[2]);
 				$option->setPrice(((int) $priceMatches[0]) ?? null);
 				$option->setAllergens(null);
 
