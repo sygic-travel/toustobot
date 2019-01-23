@@ -42,12 +42,12 @@ class SelepkaMenuCrawler implements IMenuCrawler
 
 		$options = [];
 		$list->each(function (Crawler $item, int $i) use (&$options) {
-			[$cs, $en] = explode('/', $item->filter('h6')->text());
+			$text = $item->filter('h6')->text();
 			$price = $item->filter('.cena')->text();
 
-			$matches = Strings::split($cs, '/\s+([0-9,]+)\s*$/u');
-
-			$option = new MenuOption($i + 1, $matches[0]);
+			$matches = Strings::match($text, '/^(.+)\(([0-9,]+)\)\s*$/u');
+			$dish = Strings::replace($matches[0], '~\s+\|.+~', '');
+			$option = new MenuOption($i + 1, $dish);
 			$option->setPrice((int) $price);
 			$option->setAllergens($matches[1] ?? null);
 
